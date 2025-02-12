@@ -1,11 +1,50 @@
-export default function HomePage() {
+"use client";
+
+import { useState } from "react";
+import { Header } from "../components/Header";
+import { DriveContent } from "../components/DriveContent";
+import type { DriveItem } from "../types/drive";
+import { Toaster } from "sonner";
+
+export default function Home() {
+  const [layout, setLayout] = useState<"grid" | "list">("list");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [items, setItems] = useState<DriveItem[]>([]);
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+  };
+
+  const handleCreateFolder = (name: string) => {
+    const newFolder: DriveItem = {
+      id: Date.now().toString(),
+      name,
+      modifiedAt: new Date().toISOString(),
+      parent: null,
+      visibility: "private",
+    };
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    setItems([...items, newFolder]);
+  };
+
+  const handleUpload = () => {
+    // Implement file upload functionality
+    console.log("File upload not implemented yet");
+  };
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
-      <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
-        <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
-          drive.<span className="text-[hsl(280,100%,70%)]">djl</span>.foundation
-        </h1>
-      </div>
-    </main>
+    <div className="min-h-screen bg-gray-900 text-white">
+      <Toaster />
+      <Header
+        layout={layout}
+        onLayoutChange={setLayout}
+        onSearch={handleSearch}
+        onCreateFolder={handleCreateFolder}
+        onUpload={handleUpload}
+      />
+      <main className="container mx-auto mt-8">
+        <DriveContent layout={layout} searchQuery={searchQuery} />
+      </main>
+    </div>
   );
 }
